@@ -66,6 +66,26 @@ has 'getRecipe_scraper' => (
 				return $upper ? "$lower-$upper" : $lower;
 			};
 			process 'section.serves p', 'description' => 'TEXT';
+			
+			my $node = 'ingredients';
+			my $nodes = {};
+			process '//li[@itemprop="ingredients"]/../li', 'ingers[]' => sub {
+				my $ip = $_->attr('itemprop') || '';
+				if (!$ip) {
+					$node = $_->as_trimmed_text();
+					$nodes->{$node} = [];
+				} else {
+					push @{ $nodes->{$node} }, $_->as_trimmed_text();
+				}
+				
+				return undef;
+			};
+			
+			process '//li[1]', 'new_ingers' => sub {
+				return $nodes;
+			};
+			#$_->{organized_ingr} = $nodes;
+			
 			process '//li[@itemprop="ingredients"]', 'ingredients[]' => scraper {
 				process '//span[1]', 'qty' => sub { return $_->as_trimmed_text(); };
 				process '//span[2]', 'name' => sub { return $_->as_trimmed_text(); };
@@ -116,7 +136,7 @@ sub getRecipe {
 	my $ret_val = {};
 	
 	if ($resp->{success}) {
-		#print $resp->{content};
+		#print $resp->{content}; exit(100);
 		$ret_val = $self->getRecipe_scraper->scrape($resp->{content});
 	}
 	

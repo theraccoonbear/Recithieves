@@ -43,8 +43,10 @@ my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 
 my $recipe_id = 2899;
 
-print Dumper($ci->getRecipe($recipe_id));
+#print Dumper($ci->getRecipe($recipe_id)); exit(0);
 
-#if ($ci->login()) {
-#	print Dumper($ci->getRecipe($recipe_id));
-#}
+print "logging in...\n";
+if ($ci->login()) {
+	print "ok. fetching data...\n";
+	print Dumper($ci->getRecipe($recipe_id));
+}
