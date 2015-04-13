@@ -3,6 +3,7 @@ use lib '../..';
 
 use Moose;
 
+use utf8::all;
 use Cache::File;
 use IO::Socket::SSL qw();
 use WWW::Mechanize qw();
@@ -40,17 +41,39 @@ has 'password' => (
 	isa => 'Str'
 );
 
+
 has 'cache' => (
 	is => 'rw',
 	isa => 'Cache::File',
 	default => sub {
-
 		return Cache::File->new(
 			cache_root => '/tmp/mycache',
       default_expires => '30 day'
 		);
 	}
 );
+
+has 'config' => (
+	is => 'rw',
+	isa => 'HashRef',
+	default => sub { return {}; }
+);
+
+has 'logged_in' => (
+	is => 'rw',
+	isa => 'Bool',
+	default => 0
+);
+
+#has 'trimmer' => (
+#	is => 'rw',
+#	isa => 'CodeRef',
+#	default => sub {
+#		return sub {
+#		 return $_->as_trimmed_text();
+#		};
+#	}
+#);
 
 has 'mech' => (
 	'is' => 'rw',
@@ -73,6 +96,27 @@ has 'mech' => (
 	}
 );
 
+sub err {
+	my $self = shift @_;
+	my $msg = shift @_ || 'Unkown Error';
+	$self->log($msg, 'ERROR');
+	exit(0);
+}
+
+sub warn {
+	my $self = shift @_;
+	my $msg = shift @_ || 'Unkown Warning';
+	$self->log($msg, 'WARNING');
+}
+
+sub log {
+	my $self = shift @_;
+	my $msg = shift @_ || '...';
+	my $type = shift @_ || 'LOG';
+	
+	print STDERR "$type: $msg\n";
+}
+
 sub baseURL() {
 	my $self = shift @_;
 	
@@ -84,16 +128,28 @@ sub pullURL {
 	my $self = shift @_;
 	my $url = shift @_;
 	
+	
 	my $ret = {
 		success => 0,
 		content => ''
-	};
+	}; 
 	
-	$self->mech->get($url);
-	if ($self->mech->success) {
-		$ret->{success} = 1;
-		$ret->{content} = $self->mech->{content};
+	if (!$self->cache->exists($url)) {
+		$self->log("pulling $url");
+		$self->mech->get($url);
+		if ($self->mech->success) {
+			$ret->{success} = 1;
+			$ret->{content} = $self->mech->{content};
+			$self->cache->set($url, encode_json($ret));
+		} else {
+			$ret->{success} = 0;
+			$ret->{content} = '';
+		}
+	} else {
+		$self->log("using cached $url");
+		$ret = decode_json($self->cache->get($url));
 	}
+	
 	
 	return $ret;
 }

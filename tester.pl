@@ -6,6 +6,7 @@ use FindBin;
 use lib "$FindBin::Bin/lib";
 
 use Recithieves::Source::SeriousEats;
+use Recithieves::Source::CooksIllustrated;
 
 use JSON::XS;
 use Getopt::Long;
@@ -35,8 +36,15 @@ if ($config_file && -f $config_file) {
 }
 
 
-my $se = new Recithieves::Source::SeriousEats();
+#my $se = new Recithieves::Source::SeriousEats(config => $config);
+my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 
-my $results = $se->search('pork');
+#$ci->cache->clear(); exit(0);
 
-print Dumper($results);
+my $recipe_id = 2899;
+
+print Dumper($ci->getRecipe($recipe_id));
+
+#if ($ci->login()) {
+#	print Dumper($ci->getRecipe($recipe_id));
+#}
