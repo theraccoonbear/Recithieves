@@ -77,14 +77,11 @@ has 'getRecipe_scraper' => (
 				} else {
 					push @{ $nodes->{$node} }, $_->as_trimmed_text();
 				}
-				
-				return undef;
 			};
 			
 			process '//li[1]', 'new_ingers' => sub {
 				return $nodes;
 			};
-			#$_->{organized_ingr} = $nodes;
 			
 			process '//li[@itemprop="ingredients"]', 'ingredients[]' => scraper {
 				process '//span[1]', 'qty' => sub { return $_->as_trimmed_text(); };

@@ -41,7 +41,10 @@ my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 
 #$ci->cache->clear(); exit(0);
 
-my $recipe_id = 2899;
+my $recipe_id;
+
+$recipe_id = 2899; # pork chops
+$recipe_id = 4662; # ziti
 
 #print Dumper($ci->getRecipe($recipe_id)); exit(0);
 
