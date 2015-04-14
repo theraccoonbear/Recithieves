@@ -9,7 +9,7 @@ use IO::Socket::SSL qw();
 use WWW::Mechanize qw();
 use Web::Scraper;
 use HTTP::Cookies;
-use Data::Dumper;
+use Data::Printer;
 use JSON::XS;
 use URI::Escape;
 use Web::Scraper;
@@ -67,25 +67,28 @@ has 'getRecipe_scraper' => (
 			};
 			process 'section.serves p', 'description' => 'TEXT';
 			
-			my $node = 'ingredients';
-			my $nodes = {};
-			process '//li[@itemprop="ingredients"]/../li', 'ingers[]' => sub {
-				my $ip = $_->attr('itemprop') || '';
-				if (!$ip) {
-					$node = $_->as_trimmed_text();
-					$nodes->{$node} = [];
-				} else {
-					push @{ $nodes->{$node} }, $_->as_trimmed_text();
-				}
-			};
+			#my $node = 'ingredients';
+			#my $nodes = {};
+			#process '//li[@itemprop="ingredients"]/../li', 'ingers[]' => sub {
+			#	p(@_); exit(0);
+			#	my $ip = $_->attr('itemprop') || '';
+			#	if (!$ip) {
+			#		$node = $_->as_trimmed_text();
+			#		$nodes->{$node} = [];
+			#	} else {
+			#		push @{ $nodes->{$node} }, $_->as_trimmed_text();
+			#	}
+			#};
+			#
+			#process '//li[1]', 'new_ingers' => sub {
+			#	return $nodes;
+			#};
 			
-			process '//li[1]', 'new_ingers' => sub {
-				return $nodes;
-			};
-			
-			process '//li[@itemprop="ingredients"]', 'ingredients[]' => scraper {
-				process '//span[1]', 'qty' => sub { return $_->as_trimmed_text(); };
-				process '//span[2]', 'name' => sub { return $_->as_trimmed_text(); };
+			my $section = 'all';
+			process '//li[@itemprop="ingredients"]/../li', 'ingredients[]' => scraper {
+				process '//span[1]', "qty[\"$section\"]" => sub { return $_->as_trimmed_text(); };
+				process '//span[2]', "name[\"$section\"]" => sub { return $_->as_trimmed_text(); };
+				process 'h5', 'section' => sub { $section = $_->as_trimmed_text(); };
 			};
 			
 			process '//li[@itemprop="recipeInstructions"]//div//p', 'steps[]' => sub { my $t = $_->as_trimmed_text(); $t =~ s/\d+\.\s*//; return $t; };
