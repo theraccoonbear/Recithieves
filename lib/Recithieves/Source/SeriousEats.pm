@@ -32,6 +32,19 @@ has '+protocol' => (
 	default => 'http'
 );
 
+has 'search_scraper' => (
+	is => 'rw',
+	isa => 'Web::Scraper',
+	default => sub {
+		return scraper {
+			process '#search_results article', 'recipes[]' => scraper {
+				process 'h2 a', 'url' => '@href', 'title' => sub { return $_->as_trimmed_text(); };
+				process 'p', 'description' => sub { return $_->as_trimmed_text(); }
+			};
+		};
+	}
+);
+
 sub search {
   my $self = shift @_;
 	my $terms = shift @_;
@@ -44,13 +57,9 @@ sub search {
 	my $url = $self->baseURL() . '/search?' . $self->encodeParams($params);
 	my $page = $self->pullURL($url);
 	
-	my $scraper = scraper {
-		process '#search_results article', 'recipes[]' => scraper {
-			process 'h2 a', 'url' => '@href', 'title' => 'TEXT';
-		};
-	};
 	
-	my $results = $scraper->scrape($page->{content});
+	
+	my $results = $self->search_scraper->scrape($page->{content});
 	my $new_results = [];
 	
 	foreach my $recipe (@{$results->{recipes}}) {

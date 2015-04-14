@@ -38,9 +38,9 @@ has 'search_scraper' => (
 	default => sub {
 		return scraper {
 			process 'ul.search li.available', 'recipes[]' => scraper {
-				process 'h3 a', 'url' => '@href', 'title' => 'TEXT';
-				process 'p.description', 'description' => 'TEXT';
-				process 'span.document_type', 'doc_type' => 'TEXT';
+				process 'h3 a', 'url' => '@href', 'title' => sub { return $_->as_trimmed_text(); };
+				process 'p.description', 'description' => sub { return $_->as_trimmed_text(); };
+				process 'span.document_type', 'doc_type' => sub { return $_->as_trimmed_text(); };
 				process 'a.photo', 'photo' => '@style';
 			};
 		};
@@ -66,23 +66,6 @@ has 'getRecipe_scraper' => (
 				return $upper ? "$lower-$upper" : $lower;
 			};
 			process 'section.serves p', 'description' => 'TEXT';
-			
-			#my $node = 'ingredients';
-			#my $nodes = {};
-			#process '//li[@itemprop="ingredients"]/../li', 'ingers[]' => sub {
-			#	p(@_); exit(0);
-			#	my $ip = $_->attr('itemprop') || '';
-			#	if (!$ip) {
-			#		$node = $_->as_trimmed_text();
-			#		$nodes->{$node} = [];
-			#	} else {
-			#		push @{ $nodes->{$node} }, $_->as_trimmed_text();
-			#	}
-			#};
-			#
-			#process '//li[1]', 'new_ingers' => sub {
-			#	return $nodes;
-			#};
 			
 			my $section = 'all';
 			process '//li[@itemprop="ingredients"]/../li', '_ingredients[]' => scraper {
@@ -113,7 +96,6 @@ sub search {
 	my $new_results = [];
 	
 	foreach my $recipe (@{$results->{recipes}}) {
-		#$recipe->{title} =~ s/\|.+$//gi;
 		if ($recipe->{doc_type} =~ m/recipe/i && $recipe->{url} =~ m/\/recipes\/(?<id>\d+)/i) {
 			$recipe->{id} = $+{id};
 			$recipe->{photo} = $recipe->{photo} || '';
@@ -131,7 +113,12 @@ sub getRecipe {
 	my $self = shift @_;
 	my $recipe_id = shift @_;
 	
-	my $url = $self->baseURL() . '/recipes/' . $recipe_id;
+	my $url = $recipe_id;
+	
+	if ($recipe_id =~ m/^\d+$/) {
+		$url = $self->baseURL() . '/recipes/' . $recipe_id;
+	}
+	
 	my $resp = $self->pullURL($url);
 	
 	my $ret_val = {};
