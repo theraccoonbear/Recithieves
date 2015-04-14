@@ -44,9 +44,13 @@ my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 my $recipe_id;
 
 $recipe_id = 2899; # pork chops
-#$recipe_id = 4662; # ziti
+$recipe_id = 4662; # ziti
 
-#p($ci->getRecipe($recipe_id)); exit(0);
+if ($ARGV[0]) {
+	$recipe_id = $ARGV[0];
+}
+
+p($ci->getRecipe($recipe_id)); exit(0);
 
 print "logging in...\n";
 if ($ci->login()) {

@@ -85,10 +85,11 @@ has 'getRecipe_scraper' => (
 			#};
 			
 			my $section = 'all';
-			process '//li[@itemprop="ingredients"]/../li', 'ingredients[]' => scraper {
-				process '//span[1]', "qty[\"$section\"]" => sub { return $_->as_trimmed_text(); };
-				process '//span[2]', "name[\"$section\"]" => sub { return $_->as_trimmed_text(); };
+			process '//li[@itemprop="ingredients"]/../li', '_ingredients[]' => scraper {
+				process '//span[1]', "qty" => sub { return $_->as_trimmed_text(); };
+				process '//span[2]', "name" => sub { return $_->as_trimmed_text(); };
 				process 'h5', 'section' => sub { $section = $_->as_trimmed_text(); };
+				process './/', '_raw' => sub { $section = $_->as_trimmed_text(); };
 			};
 			
 			process '//li[@itemprop="recipeInstructions"]//div//p', 'steps[]' => sub { my $t = $_->as_trimmed_text(); $t =~ s/\d+\.\s*//; return $t; };
@@ -138,6 +139,18 @@ sub getRecipe {
 	if ($resp->{success}) {
 		#print $resp->{content}; exit(100);
 		$ret_val = $self->getRecipe_scraper->scrape($resp->{content});
+		
+		$ret_val->{ingredients} = {};
+		my $section = 'all';
+		foreach my $ing (@{ $ret_val->{_ingredients} }) {
+			if ($ing->{section}) {
+				$section = $ing->{section};
+				$ret_val->{ingredients}->{$section} = [];
+			} else {
+				push @{ $ret_val->{ingredients}->{$section} }, $self->parseIngredient($ing->{_raw});
+			}
+		}
+		delete $ret_val->{_ingredients};
 	}
 	
 	return $ret_val;

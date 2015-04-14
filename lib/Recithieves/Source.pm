@@ -9,7 +9,7 @@ use IO::Socket::SSL qw();
 use WWW::Mechanize qw();
 use Web::Scraper;
 use HTTP::Cookies;
-use Data::Dumper;
+use Data::Printer;
 use Text::Levenshtein qw(distance);
 use JSON::XS;
 use URI::Escape;
@@ -65,15 +65,40 @@ has 'logged_in' => (
 	default => 0
 );
 
-#has 'trimmer' => (
-#	is => 'rw',
-#	isa => 'CodeRef',
-#	default => sub {
-#		return sub {
-#		 return $_->as_trimmed_text();
-#		};
-#	}
-#);
+my $units = {
+	'cups?' => 'c.',
+	'c\.?' => 'c.',
+	'tablespoons?' => 'T.',
+	'tbsp' => 'T.',
+	'TBSP\.?' => 'T.',
+	'T\.?' => 'T.',
+	'teaspoons?' => 't.',
+	'tsp' => 't.',
+	't\.?' => 't.',
+	'ounces?' => 'oz.',
+	'ozs?\.?' => 'oz.',
+	'(fl\.?|fluid)\s+(ounces?|ozs?\.?)' => 'fl. oz.',
+	'pints?' => 'pt.',
+	'pt\.?' => 'pt.',
+	'quarts?' => 'qt.',
+	'qts?\.?' => 'qt.',
+	'gallons?' => 'gal.',
+	'gals?\.?' => 'gal.',
+	'pounds?' => 'lbs.',
+	'lbs?\.?' => 'lbs.',
+	'packages?' => 'pkg.',
+	'pkg\.?' => 'pkg.',
+	'liters?' => 'L.',
+	'L\.?' => 'L.',
+	'm[lL]' => 'mL',
+	'[Dd]ash(es)?' => 'dash',
+	'[Pp]inch(es)?' => 'pinch',
+	'each' => 'each'
+};
+
+my $unit_rgx = join('|', sort { lc($a) cmp lc($b) } keys %$units);
+
+#p($unit_rgx); exit(0);
 
 has 'mech' => (
 	'is' => 'rw',
@@ -122,6 +147,41 @@ sub baseURL() {
 	
 	my $url = $self->protocol . '://' . $self->hostname . ':' .$self->port;
 	return $url;
+}
+
+sub parseIngredient {
+	my $self = shift @_;
+	my $ing = shift @_;
+	
+	my $new_ing = $ing;
+	
+	my $ing_rgx = '^((?<qty>(?<num>\d+)(\/(?<den>\d+))?)\s+)?(\b(?<unit>' . $unit_rgx . ')\b\s+)?(?<name>.+)$';
+	
+	if ($ing =~ m/$ing_rgx/) {
+		my $qty = $+{qty} ? ($+{den} ? $+{num} / $+{den} : $+{qty}) : 1;
+		my $name = $+{name};
+		my $found = 0;
+		my $unit = $+{unit} || 'each';
+		
+		foreach my $r (keys %$units) {
+			if ($unit =~ m/^$r$/) {
+				$unit = $units->{$r};
+				$found = 1;
+				last;
+			}
+		}
+		
+		if (!$found) { $unit = 'each'; }
+		
+		
+		$new_ing = {
+			qty => $qty,
+			unit => $unit,
+			name => $name
+		};
+	}
+	
+	return $new_ing;
 }
 
 sub pullURL {
