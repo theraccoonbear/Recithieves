@@ -1,0 +1,16 @@
+<div id="searchBox">
+	<label for="searchTerm">Search Term: <input id="searchTerm"></label> <input type="button" id="searchButton" value="Search">
+</div>
+
+<script type="text/x-mustache" class="mtmpl" id="resultsEntry">
+	<li class="recipe">
+		{{#photo}}
+			<img src="{{.}}">
+		{{/photo}}
+		<a href="#" class="actionable" data-action="showRecipe" data-id="{{id}}">{{title}}</a> - <p>{{description}}</p>
+	</li>
+</script>
+
+<ul id="resultsList" data-template="resultEntry">
+	
+</ul>

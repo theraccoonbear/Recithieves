@@ -38,7 +38,7 @@ has 'search_scraper' => (
 	default => sub {
 		return scraper {
 			process '#search_results article', 'recipes[]' => scraper {
-				process 'h2 a', 'url' => '@href', 'title' => sub { return $_->as_trimmed_text(); };
+				process 'h2 a', 'url' => '@href', 'name' => sub { return $_->as_trimmed_text(); };
 				process 'p', 'description' => sub { return $_->as_trimmed_text(); }
 			};
 		};

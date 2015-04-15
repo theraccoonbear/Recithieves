@@ -189,6 +189,7 @@ sub parseIngredient {
 sub pullURL {
 	my $self = shift @_;
 	my $url = shift @_;
+	my $no_cache = shift @_ || 0;
 	
 	
 	my $ret = {
@@ -196,7 +197,7 @@ sub pullURL {
 		content => ''
 	}; 
 	
-	if (!$self->cache->exists($url)) {
+	if ($no_cache || !$self->cache->exists($url)) {
 		$self->log("pulling $url");
 		$self->mech->get($url);
 		if ($self->mech->success) {
