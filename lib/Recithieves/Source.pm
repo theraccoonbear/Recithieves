@@ -104,7 +104,9 @@ has 'mech' => (
 	'is' => 'rw',
 	'isa' => 'WWW::Mechanize',
 	'default' => sub {
-		my $ua_string = "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4";
+		
+		# UA pass through when HTTP client making request
+		my $ua_string = $ENV{HTTP_USER_AGENT} || "Mozilla/5.0 (X11; Linux i686) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.4";
 		my $cookie_jar = HTTP::Cookies->new();
 		$cookie_jar->clear();
 		my $www_mech = WWW::Mechanize->new(
