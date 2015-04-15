@@ -1,4 +1,4 @@
-package Recithieves::Source::CooksIllustrated;
+package Recithieves::Source::Food52;
 use lib '../..';
 
 use Moose;
@@ -17,19 +17,19 @@ use Web::Scraper;
 has '+hostname' => (
 	is => 'rw',
 	isa => 'Str',
-	default => 'www.cooksillustrated.com'
+	default => 'www.food52.com'
 );
 
 has '+port' => (
 	is => 'rw',
 	isa => 'Int',
-	default => 443
+	default => 80
 );
 
 has '+protocol' => (
 	is => 'rw',
 	isa => 'Str',
-	default => 'https'
+	default => 'http'
 );
 
 has 'search_scraper' => (
@@ -37,11 +37,11 @@ has 'search_scraper' => (
 	isa => 'Web::Scraper',
 	default => sub {
 		return scraper {
-			process 'ul.search li.available', 'recipes[]' => scraper {
-				process 'h3 a', 'url' => '@href', 'title' => sub { return $_->as_trimmed_text(); };
-				process 'p.description', 'description' => sub { return $_->as_trimmed_text(); };
-				process 'span.document_type', 'doc_type' => sub { return $_->as_trimmed_text(); };
-				process 'a.photo', 'photo' => '@style';
+			process '//div[@data-type="recipe"]', 'recipes[]' => scraper {
+				process 'h3 a', 'title' => '@title';
+				process '//../div[@data-type="recipe"]', 'id' => '@data-id';
+				process 'img', 'photo' => '@data-original';
+				process '//..', 'description' => sub { return '...'; };
 			};
 		};
 	}
@@ -53,29 +53,29 @@ has 'getRecipe_scraper' => (
 	default => sub {
 		my $self = shift @_;
 		return scraper {
-			process 'h2[itemprop="name"]', 'title' => sub { return $_->as_trimmed_text(); };
-			process 'h4[itemprop="recipeYield"]', 'recipe_yield' => sub {
-				my $t = $_->as_trimmed_text();
-				my $lower = 1;
-				my $upper;
-				if ($t =~ m/Serves\s+(?<lower>\d+)(\s+to\s+(?<upper>\d+))?/i) {
-					$lower = $+{lower};
-					$upper = $+{upper};
-				}
-				
-				return $upper ? "$lower-$upper" : $lower;
-			};
-			process 'section.serves p', 'description' => 'TEXT';
-			
-			my $section = 'all';
-			process '//li[@itemprop="ingredients"]/../li', '_ingredients[]' => scraper {
-				process '//span[1]', "qty" => sub { return $_->as_trimmed_text(); };
-				process '//span[2]', "name" => sub { return $_->as_trimmed_text(); };
-				process 'h5', 'section' => sub { $section = $_->as_trimmed_text(); };
-				process './/', '_raw' => sub { $section = $_->as_trimmed_text(); };
-			};
-			
-			process '//li[@itemprop="recipeInstructions"]//div//p', 'steps[]' => sub { my $t = $_->as_trimmed_text(); $t =~ s/\d+\.\s*//; return $t; };
+		#	process 'h2[itemprop="name"]', 'name' => sub { return $_->as_trimmed_text(); };
+		#	process 'h4[itemprop="recipeYield"]', 'recipe_yield' => sub {
+		#		my $t = $_->as_trimmed_text();
+		#		my $lower = 1;
+		#		my $upper;
+		#		if ($t =~ m/Serves\s+(?<lower>\d+)(\s+to\s+(?<upper>\d+))?/i) {
+		#			$lower = $+{lower};
+		#			$upper = $+{upper};
+		#		}
+		#		
+		#		return $upper ? "$lower-$upper" : $lower;
+		#	};
+		#	process 'section.serves p', 'description' => 'TEXT';
+		#	
+		#	my $section = 'all';
+		#	process '//li[@itemprop="ingredients"]/../li', '_ingredients[]' => scraper {
+		#		process '//span[1]', "qty" => sub { return $_->as_trimmed_text(); };
+		#		process '//span[2]', "name" => sub { return $_->as_trimmed_text(); };
+		#		process 'h5', 'section' => sub { $section = $_->as_trimmed_text(); };
+		#		process './/', '_raw' => sub { $section = $_->as_trimmed_text(); };
+		#	};
+		#	
+		#	process '//li[@itemprop="recipeInstructions"]//div//p', 'steps[]' => sub { my $t = $_->as_trimmed_text(); $t =~ s/\d+\.\s*//; return $t; };
 		};
 	}
 );
@@ -85,25 +85,16 @@ sub search {
 	my $terms = shift @_;
 	
 	my $params = {
-		'q' => $terms,
-		'document_type' => 'recipes'
+		'q' => $terms
 	};
 	
-	my $url = $self->baseURL() . '/search?' . $self->encodeParams($params);
+	my $url = $self->baseURL() . '/recipes/search?' . $self->encodeParams($params);
 	my $page = $self->pullURL($url);
-	
 	my $results = $self->search_scraper->scrape($page->{content});
 	my $new_results = [];
 	
 	foreach my $recipe (@{$results->{recipes}}) {
-		if ($recipe->{doc_type} =~ m/recipe/i && $recipe->{url} =~ m/\/recipes\/(?<id>\d+)/i) {
-			$recipe->{id} = $+{id};
-			$recipe->{photo} = $recipe->{photo} || '';
-			$recipe->{photo} =~ s/^.+?url\(([^\)]+)\).*$/$1/;
-			$recipe->{photo} = $recipe->{photo} ? 'https:' . $recipe->{photo} : '';
-			
-			push @$new_results, $recipe;
-		}
+		push @$new_results, $recipe;
 	}
 	
 	return $new_results;

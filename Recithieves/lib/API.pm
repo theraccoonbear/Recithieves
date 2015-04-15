@@ -13,6 +13,7 @@ use JSON::XS;
 
 use Recithieves::Source::CooksIllustrated;
 use Recithieves::Source::SeriousEats;
+use Recithieves::Source::Food52;
 
 use Dancer::Plugin::Ajax;
 
@@ -32,11 +33,13 @@ if ($config_file && -f $config_file) {
 my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 $ci->login();
 my $se = new Recithieves::Source::SeriousEats(config => $config);
+my $f52 = new Recithieves::Source::Food52(config => $config);
 
 sub initRoutes {
 	my $sources = {
 		'cooks' => $ci,
-		'serious-eats' => $se
+		'serious-eats' => $se,
+		'food52' => $f52
 	};
 
 	any '/api/search/:source/:term' => sub {

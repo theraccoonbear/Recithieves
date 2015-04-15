@@ -7,6 +7,7 @@ use lib "$FindBin::Bin/lib";
 
 use Recithieves::Source::SeriousEats;
 use Recithieves::Source::CooksIllustrated;
+use Recithieves::Source::Food52;
 
 use JSON::XS;
 use Getopt::Long;
@@ -38,27 +39,30 @@ if ($config_file && -f $config_file) {
 
 my $se = new Recithieves::Source::SeriousEats(config => $config);
 my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
+my $f52 = new Recithieves::Source::Food52(config => $config);
 
-print "Serious Eats:\n";
-p($se->search('pork'));
+p($f52->search('pork'));
 
-#$ci->cache->clear(); exit(0);
-
-#my $recipe_id;
+#print "Serious Eats:\n";
+#p($se->search('pork'));
 #
-#$recipe_id = 2899; # pork chops
-#$recipe_id = 4662; # ziti
+##$ci->cache->clear(); exit(0);
 #
-#if ($ARGV[0]) {
-#	$recipe_id = $ARGV[0];
+##my $recipe_id;
+##
+##$recipe_id = 2899; # pork chops
+##$recipe_id = 4662; # ziti
+##
+##if ($ARGV[0]) {
+##	$recipe_id = $ARGV[0];
+##}
+##
+##p($ci->getRecipe($recipe_id)); exit(0);
+##
+#print "logging into CI...\n";
+#if ($ci->login()) {
+#	print "ok. fetching data...\n";
+#	print "Cooks Illustrated:\n";
+#	p($ci->search('pork'));
+#	#p($ci->getRecipe($recipe_id));
 #}
-#
-#p($ci->getRecipe($recipe_id)); exit(0);
-#
-print "logging into CI...\n";
-if ($ci->login()) {
-	print "ok. fetching data...\n";
-	print "Cooks Illustrated:\n";
-	p($ci->search('pork'));
-	#p($ci->getRecipe($recipe_id));
-}
