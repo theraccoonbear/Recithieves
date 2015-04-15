@@ -34,23 +34,23 @@ $ci->login();
 my $se = new Recithieves::Source::SeriousEats(config => $config);
 
 sub initRoutes {
-	#ajax '/api/' => sub {
+	my $sources = {
+		'cooks' => $ci,
+		'serious-eats' => $se
+	};
+
 	any '/api/search/:source/:term' => sub {
-		my $sources = {
-			'cooks' => $ci,
-			'serious-eats' => $se
-		};
-		my $ret_val = [];
 		my $src = $sources->{param('source')};
-		
-		
 		content_type 'text/plain';
 		return encode_json($src->search(param('term')));
-		#push @$ret_val, "searching " . param('source') . " for \"" . param('term') . '"';
-		#push @$ret_val, encode_json($src->search(param('term')));
-		#
-		#return join("\n", @$ret_val);
+
 	};
+	
+	any '/api/fetch/:source/:id' => sub {
+		my $src = $sources->{param('source')};
+		content_type 'text/plain';
+		return encode_json($src->getRecipe(param('id')));
+	}
 }
 
 initRoutes();

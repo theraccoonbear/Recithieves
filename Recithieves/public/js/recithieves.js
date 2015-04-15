@@ -32,8 +32,15 @@ $(function() {
 			var id = $this.data('id');
 			var action = $this.data('action');
 			console.log(id, action);
+			ctxt[action](id);
 			e.preventDefault();
 		});
+		
+		this.showRecipe = function(id) {
+			$.getJSON('/api/fetch/cooks/' + id, {}, function(d, s, x) {
+				console.log(d);
+			});
+		};
 	};
 	
 	recithieves = new Recithieves();
