@@ -53,29 +53,7 @@ has 'getRecipe_scraper' => (
 	default => sub {
 		my $self = shift @_;
 		return scraper {
-		#	process 'h2[itemprop="name"]', 'name' => sub { return $_->as_trimmed_text(); };
-		#	process 'h4[itemprop="recipeYield"]', 'recipe_yield' => sub {
-		#		my $t = $_->as_trimmed_text();
-		#		my $lower = 1;
-		#		my $upper;
-		#		if ($t =~ m/Serves\s+(?<lower>\d+)(\s+to\s+(?<upper>\d+))?/i) {
-		#			$lower = $+{lower};
-		#			$upper = $+{upper};
-		#		}
-		#		
-		#		return $upper ? "$lower-$upper" : $lower;
-		#	};
-		#	process 'section.serves p', 'description' => 'TEXT';
-		#	
-		#	my $section = 'all';
-		#	process '//li[@itemprop="ingredients"]/../li', '_ingredients[]' => scraper {
-		#		process '//span[1]', "qty" => sub { return $_->as_trimmed_text(); };
-		#		process '//span[2]', "name" => sub { return $_->as_trimmed_text(); };
-		#		process 'h5', 'section' => sub { $section = $_->as_trimmed_text(); };
-		#		process './/', '_raw' => sub { $section = $_->as_trimmed_text(); };
-		#	};
-		#	
-		#	process '//li[@itemprop="recipeInstructions"]//div//p', 'steps[]' => sub { my $t = $_->as_trimmed_text(); $t =~ s/\d+\.\s*//; return $t; };
+			
 		};
 	}
 );

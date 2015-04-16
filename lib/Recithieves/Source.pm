@@ -16,6 +16,7 @@ use URI::Escape;
 use Cwd 'abs_path';
 use File::Basename;
 use Recithieves::Loader;
+use Digest::CRC qw(crc16);
 
 has 'hostname' => (
 	is => 'rw',
@@ -143,6 +144,13 @@ has 'mech' => (
 		return $www_mech;
 	}
 );
+
+sub genID {
+	my $self = shift @_;
+	my $str = shift @_;
+	
+	return uc(sprintf("%04x", crc16($str)));
+}
 
 sub err {
 	my $self = shift @_;

@@ -11,6 +11,12 @@
 	</li>
 </script>
 
+<script type="text/x-mustache" class="mtmpl" id="recipeDetail">
+	<div class="recipeDetail">
+		
+	</div>
+</script>
+
 <ul id="resultsList" data-template="resultEntry">
 	
 </ul>

@@ -38,9 +38,20 @@ has 'search_scraper' => (
 	default => sub {
 		return scraper {
 			process '#search_results article', 'recipes[]' => scraper {
-				process 'h2 a', 'url' => '@href', 'title' => sub { return $_->as_trimmed_text(); };
-				process 'p', 'description' => sub { return $_->as_trimmed_text(); }
+				process 'h2 a', 'url' => '@href', 'title' => sub { return $_->as_trimmed_text(); }, 'id' => '@href';
+				process 'p', 'description' => sub { return $_->as_trimmed_text(); };
 			};
+		};
+	}
+);
+
+has 'getRecipe_scraper' => (
+	is => 'rw',
+	isa => 'Web::Scraper',
+	default => sub {
+		return scraper {
+			process 'h3.fn', 'title' => sub { $_->as_trimmed_text(); };
+			process '.recipe-about span.yield', 'recipe_yield' => sub { my $t =  $_->as_trimmed_text(); $t =~ s/Serves\s+//i; return $t; };
 		};
 	}
 );
