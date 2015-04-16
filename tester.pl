@@ -38,10 +38,10 @@ if ($config_file && -f $config_file) {
 
 
 my $se = new Recithieves::Source::SeriousEats(config => $config);
-my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
-my $f52 = new Recithieves::Source::Food52(config => $config);
+#my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
+#my $f52 = new Recithieves::Source::Food52(config => $config);
 
-p($f52->search('pork'));
+#p($f52->search('pork'));
 
 #print "Serious Eats:\n";
 #p($se->search('pork'));

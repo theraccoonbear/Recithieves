@@ -13,6 +13,9 @@ use Data::Printer;
 use Text::Levenshtein qw(distance);
 use JSON::XS;
 use URI::Escape;
+use Cwd 'abs_path';
+use File::Basename;
+use Recithieves::Loader;
 
 has 'hostname' => (
 	is => 'rw',
@@ -65,38 +68,56 @@ has 'logged_in' => (
 	default => 0
 );
 
-my $units = {
-	'cups?' => 'c.',
-	'c\.?' => 'c.',
-	'tablespoons?' => 'T.',
-	'tbsp' => 'T.',
-	'TBSP\.?' => 'T.',
-	'T\.?' => 'T.',
-	'teaspoons?' => 't.',
-	'tsp' => 't.',
-	't\.?' => 't.',
-	'ounces?' => 'oz.',
-	'ozs?\.?' => 'oz.',
-	'(fl\.?|fluid)\s+(ounces?|ozs?\.?)' => 'fl. oz.',
-	'pints?' => 'pt.',
-	'pt\.?' => 'pt.',
-	'quarts?' => 'qt.',
-	'qts?\.?' => 'qt.',
-	'gallons?' => 'gal.',
-	'gals?\.?' => 'gal.',
-	'pounds?' => 'lbs.',
-	'lbs?\.?' => 'lbs.',
-	'packages?' => 'pkg.',
-	'pkg\.?' => 'pkg.',
-	'liters?' => 'L.',
-	'L\.?' => 'L.',
-	'm[lL]' => 'mL',
-	'[Dd]ash(es)?' => 'dash',
-	'[Pp]inch(es)?' => 'pinch',
-	'each' => 'each'
-};
+has 'loader' => (
+	is => 'rw',
+	isa => 'Recithieves::Loader',
+	default => sub {
+		return new Recithieves::Loader();
+	}
+);
 
-my $unit_rgx = join('|', sort { lc($a) cmp lc($b) } keys %$units);
+
+#my $units = {
+#	'cups?' => 'c.',
+#	'c\.?' => 'c.',
+#	'tablespoons?' => 'T.',
+#	'tbsp' => 'T.',
+#	'TBSP\.?' => 'T.',
+#	'T\.?' => 'T.',
+#	'teaspoons?' => 't.',
+#	'tsp' => 't.',
+#	't\.?' => 't.',
+#	'ounces?' => 'oz.',
+#	'ozs?\.?' => 'oz.',
+#	'(fl\.?|fluid)\s+(ounces?|ozs?\.?)' => 'fl. oz.',
+#	'pints?' => 'pt.',
+#	'pt\.?' => 'pt.',
+#	'quarts?' => 'qt.',
+#	'qts?\.?' => 'qt.',
+#	'gallons?' => 'gal.',
+#	'gals?\.?' => 'gal.',
+#	'pounds?' => 'lbs.',
+#	'lbs?\.?' => 'lbs.',
+#	'packages?' => 'pkg.',
+#	'pkg\.?' => 'pkg.',
+#	'liters?' => 'L.',
+#	'L\.?' => 'L.',
+#	'm[lL]' => 'mL',
+#	'[Dd]ash(es)?' => 'dash',
+#	'[Pp]inch(es)?' => 'pinch',
+#	'each' => 'each'
+#};
+
+my $units;
+my $unit_rgx;
+
+sub BUILD {
+	my $self = shift @_;
+	
+	my $path = 'units-map.json';
+	$units = $self->loader->load($path);
+	$unit_rgx = join('|', sort { lc($a) cmp lc($b) } keys %$units);
+}
 
 #p($unit_rgx); exit(0);
 
