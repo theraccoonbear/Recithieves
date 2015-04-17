@@ -10,6 +10,7 @@ use WWW::Mechanize qw();
 use Web::Scraper;
 use HTTP::Cookies;
 use Data::Printer;
+use Data::Dumper;
 use Text::Levenshtein qw(distance);
 use JSON::XS;
 use URI::Escape;

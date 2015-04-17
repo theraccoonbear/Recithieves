@@ -50,7 +50,7 @@ has 'getRecipe_scraper' => (
 	isa => 'Web::Scraper',
 	default => sub {
 		return scraper {
-			process 'h3.fn', 'title' => sub { $_->as_trimmed_text(); };
+			process 'h3.fn', 'title' => sub { return $_->as_trimmed_text(); };
 			process '.recipe-about span.yield', 'recipe_yield' => sub { my $t =  $_->as_trimmed_text(); $t =~ s/Serves\s+//i; return $t; };
 		};
 	}
@@ -88,9 +88,22 @@ sub getRecipe {
 	my $self = shift @_;
 	my $recipe = shift @_;
 	
-	my $scraper = scraper {
-		process '#print-recipe-form input[name="entry_id"]', 'recipe_id' => '@value';
+	my $url = $recipe;
+	
+	my $page = $self->pullURL($url, 1);
+	
+	return $page;
+	
+	my $results = $self->getRecipe_scraper->scrape($page->{content});
+	my $ret_val = {};
+	
+	if ($page->{content} =~ m/<Attribute\s+name="entry_id">(?<entry_id>\d+)<\/Attribute>/i) {
+		$ret_val->{entry_id} = $+{entry_id};
+	} else {
+		$ret_val->{entry_id} = '';
 	}
+	
+	return $ret_val;
 		
 }
 

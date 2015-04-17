@@ -1,0 +1,35 @@
+#!/usr/bin/env perl ../scripts/generate-schema.pl
+---
+Settings:
+  db_type: pg
+
+Fields All:     # every table gets these
+  - name: id
+    unique: true
+  - name: created
+  - name: modified
+  - name: archived
+    type: boolean
+    def: 0
+    
+Tables:         # table specific columns
+  - Name: sources
+    Fields:
+      - name: name
+      - name: base_url
+  
+  - Name: recipes
+    Fields:
+      - name: source_id
+        type: source.id
+      - name: title
+      - name: serves
+  
+  - Name: ingredients
+    Fields:
+      - name: recipe_id
+        type: recipe.id
+      - name: name
+      - name: qty
+        type: int(10)
+      - name: unit

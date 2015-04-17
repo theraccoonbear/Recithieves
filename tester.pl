@@ -38,6 +38,13 @@ if ($config_file && -f $config_file) {
 
 
 my $se = new Recithieves::Source::SeriousEats(config => $config);
+
+#$se->cache->clear();
+
+my $recipe = 'http://www.seriouseats.com/recipes/2014/01/pork-sorpotel-recipe.html';
+
+p($se->getRecipe($recipe));
+
 #my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 #my $f52 = new Recithieves::Source::Food52(config => $config);
 
