@@ -10,7 +10,7 @@ use Data::Printer;
 my $raw = read_file('../sql/schema.yml');
 my $config = Load($raw);
 
-my $field_quote_char = lc($config->{Settings}->{db_type}) eq 'pg' ? '' : '$field_quote_char';
+my $field_quote_char = lc($config->{Settings}->{db_type}) eq 'pg' ? '' : '`';
 
 sub drill {
 	my $obj = shift @_;
@@ -157,7 +157,7 @@ foreach my $t (@$tables) {
 			my $type = $meta->{type};
 			my $def = (defined $f->{def} ? ("'" . $f->{def} . "'") : undef) || (defined $meta->{def} ? ("'" . $meta->{def} . "'") : undef) || undef;
 			#print "$name = " . Dumper($meta);
-			my $parts = ["$field_quote_char$name$field_quote_char", $type];
+			my $parts = [$field_quote_char . $name . $field_quote_char, $type];
 			if ($meta->{opts}) {
 				push @$parts, join(' ', @{$meta->{opts}});
 			}
@@ -191,8 +191,6 @@ foreach my $t (@$tables) {
 	#print Dumper($fields);
 	@$fields = sort {
 		my $ret = 0;
-		p($a);
-		p($b);
 		if ($a =~ m/^id\b/) {
 			$ret = -1;
 		} elsif ($b =~ m/^id\b/) {
