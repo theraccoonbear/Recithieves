@@ -12,9 +12,9 @@ CREATE TABLE sources (
 
 DROP TABLE IF EXISTS recipes CASCADE;
 CREATE TABLE recipes (
-  source_id INTEGER REFERENCES sources (id),
   id SERIAL UNIQUE,
   serves VARCHAR(255)  DEFAULT '',
+  source_id INTEGER REFERENCES sources (id),
   title VARCHAR(255)  DEFAULT '',
   archived BOOLEAN  DEFAULT '0',
   modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01',
@@ -25,10 +25,10 @@ CREATE TABLE recipes (
 
 DROP TABLE IF EXISTS ingredients CASCADE;
 CREATE TABLE ingredients (
-  recipe_id INTEGER REFERENCES recipes (id),
   id SERIAL UNIQUE,
   name VARCHAR(255)  DEFAULT '',
   qty INTEGER  DEFAULT '0',
+  recipe_id INTEGER REFERENCES recipes (id),
   unit VARCHAR(255)  DEFAULT '',
   created TIMESTAMP WITH TIME ZONE ,
   archived BOOLEAN  DEFAULT '0',

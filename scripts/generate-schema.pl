@@ -191,9 +191,11 @@ foreach my $t (@$tables) {
 	#print Dumper($fields);
 	@$fields = sort {
 		my $ret = 0;
-		if ($a =~ m/^$field_quote_char?id\b/) {
+		p($a);
+		p($b);
+		if ($a =~ m/^id\b/) {
 			$ret = -1;
-		} elsif ($b =~ m/^$field_quote_char?id\b/) {
+		} elsif ($b =~ m/^id\b/) {
 			$ret = 1;
 		} elsif ($a =~ m/(created|modified|archived|order)/) {
 			$ret = 1;
