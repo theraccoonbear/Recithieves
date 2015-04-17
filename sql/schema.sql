@@ -13,12 +13,15 @@ CREATE TABLE sources (
 DROP TABLE IF EXISTS recipes CASCADE;
 CREATE TABLE recipes (
   id SERIAL UNIQUE,
+  description VARCHAR(255)  DEFAULT '',
+  directions TEXT[]  DEFAULT '{}',
+  photo VARCHAR(255)  DEFAULT '',
   serves VARCHAR(255)  DEFAULT '',
   source_id INTEGER REFERENCES sources (id),
   title VARCHAR(255)  DEFAULT '',
+  created TIMESTAMP WITH TIME ZONE ,
   archived BOOLEAN  DEFAULT '0',
-  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01',
-  created TIMESTAMP WITH TIME ZONE 
+  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01'
 );
 
 

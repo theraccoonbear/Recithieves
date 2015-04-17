@@ -4,11 +4,6 @@ use warnings;
 
 use FindBin;
 use lib "$FindBin::Bin/lib";
-
-use Recithieves::Source::SeriousEats;
-use Recithieves::Source::CooksIllustrated;
-use Recithieves::Source::Food52;
-
 use JSON::XS;
 use Getopt::Long;
 use Data::Printer;
@@ -16,6 +11,11 @@ use File::Slurp;
 use POSIX;
 use Cwd 'abs_path';
 use File::Basename;
+
+use Recithieves::Source::SeriousEats;
+use Recithieves::Source::CooksIllustrated;
+use Recithieves::Source::Food52;
+use Recithieves::Data;
 
 my $previous_fh = select(STDOUT); $| = 1; select($previous_fh);
 
@@ -37,13 +37,17 @@ if ($config_file && -f $config_file) {
 }
 
 
-my $se = new Recithieves::Source::SeriousEats(config => $config);
+my $data = new Recithieves::Data(config => $config);
+
+p($data);
+
+#my $se = new Recithieves::Source::SeriousEats(config => $config);
 
 #$se->cache->clear();
 
-my $recipe = 'http://www.seriouseats.com/recipes/2014/01/pork-sorpotel-recipe.html';
+#my $recipe = 'http://www.seriouseats.com/recipes/2014/01/pork-sorpotel-recipe.html';
 
-p($se->getRecipe($recipe));
+#p($se->getRecipe($recipe));
 
 #my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
 #my $f52 = new Recithieves::Source::Food52(config => $config);

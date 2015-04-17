@@ -2,6 +2,7 @@
 ---
 Settings:
   db_type: pg
+  Schema: Recithieves
 
 Fields All:     # every table gets these
   - name: id
@@ -23,7 +24,12 @@ Tables:         # table specific columns
       - name: source_id
         type: source.id
       - name: title
+      - name: description
       - name: serves
+      - name: photo
+      - name: directions
+        type: text[]
+        def: '{}'
   
   - Name: ingredients
     Fields:
@@ -33,3 +39,4 @@ Tables:         # table specific columns
       - name: qty
         type: int(10)
       - name: unit
+      

@@ -156,17 +156,18 @@ foreach my $t (@$tables) {
 			my $meta = metaFromName($f);
 			my $type = $meta->{type};
 			my $def = (defined $f->{def} ? ("'" . $f->{def} . "'") : undef) || (defined $meta->{def} ? ("'" . $meta->{def} . "'") : undef) || undef;
+			
+			
 			#print "$name = " . Dumper($meta);
 			my $parts = [$field_quote_char . $name . $field_quote_char, $type];
 			if ($meta->{opts}) {
 				push @$parts, join(' ', @{$meta->{opts}});
 			}
 			if ($def) {
-				#if (lc($config->{Settings}->{db_type}) eq 'pg') {
-				#	push @$parts, 'DEFAULT ' . $def;
-				#} else {
-					push @$parts, 'DEFAULT ' . $def;
-				#}
+				if ($def eq "'[]'") {
+					$def = '[]';
+				}
+				push @$parts, 'DEFAULT ' . $def;
 			}
 			
 			if (lc($name) eq 'id') {
@@ -234,6 +235,8 @@ __SQL
 	push @$schema, $table_def;
 	
 }
+
+
 
 
 write_file('../sql/schema.sql', join("\n", @$schema));

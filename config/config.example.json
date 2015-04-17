@@ -2,5 +2,11 @@
 	"cooks-illustrated": {
 		"username": "xxx@xxx.com",
 		"password": "xxx"
+	},
+	"database": {
+		"dsn": "xxx",
+		"username": "xxx",
+		"password": "xxx",
+		"params": {}
 	}
 }
