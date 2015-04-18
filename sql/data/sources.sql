@@ -1,0 +1,3 @@
+insert into sources (base_url, slug, name, created, archived, modified) VALUES ('http://www.food52.com', 'food52', 'Food 52', '2015-04-17 17:49', false, '2015-04-17 17:49');
+insert into sources (base_url, slug, name, created, archived, modified) VALUES ('http://www.cooksillustrated.com', 'cooks-illustrated', 'Cooks Illustrated', '2015-04-17 17:49', false, '2015-04-17 17:49');
+insert into sources (base_url, slug, name, created, archived, modified) VALUES ('http://www.seriouseats.com', 'serious-eats', 'Serious Eats', '2015-04-17 17:49', false, '2015-04-17 17:49');

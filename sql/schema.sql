@@ -3,9 +3,10 @@ CREATE TABLE sources (
   id SERIAL UNIQUE,
   base_url VARCHAR(255)  DEFAULT '',
   name VARCHAR(255)  DEFAULT '',
-  created TIMESTAMP WITH TIME ZONE ,
+  slug VARCHAR(255)  DEFAULT '',
   archived BOOLEAN  DEFAULT '0',
-  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01'
+  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01',
+  created TIMESTAMP WITH TIME ZONE 
 );
 
 
@@ -13,8 +14,8 @@ CREATE TABLE sources (
 DROP TABLE IF EXISTS recipes CASCADE;
 CREATE TABLE recipes (
   id SERIAL UNIQUE,
-  description VARCHAR(255)  DEFAULT '',
-  directions TEXT[]  DEFAULT '{}',
+  description TEXT  DEFAULT '',
+  directions TEXT  DEFAULT '[]',
   photo VARCHAR(255)  DEFAULT '',
   serves VARCHAR(255)  DEFAULT '',
   source_id INTEGER REFERENCES sources (id),

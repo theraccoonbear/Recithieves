@@ -38,8 +38,21 @@ if ($config_file && -f $config_file) {
 
 
 my $data = new Recithieves::Data(config => $config);
+my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
+my $recipe_id = 4662;
+my $recipe = $ci->getRecipe($recipe_id);
 
-p($data);
+p($recipe);
+
+#p($data->schema);
+my $rs = $data->recipe();
+#p($rs);
+
+my $to_insert = $data->prepareRecipe($recipe);
+p($to_insert);
+$rs->create(
+	$to_insert
+);
 
 #my $se = new Recithieves::Source::SeriousEats(config => $config);
 

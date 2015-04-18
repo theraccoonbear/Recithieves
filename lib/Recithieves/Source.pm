@@ -282,5 +282,18 @@ sub encodeParam {
 	return uri_escape($name) . '=' . uri_escape($value);
 }
 
+sub parsedToDB {
+	my $self = shift @_;
+	my $recipe = shift @_;
+	
+	my $ret_val = {
+		title => $recipe->{title} || '...',
+		description => $recipe->{description} || '...',
+		serves => $recipe->{serves} || '...',
+		directions => $recipe->{directions} || ['...']
+	};
+	
+	return $ret_val;
+}
 
 1;

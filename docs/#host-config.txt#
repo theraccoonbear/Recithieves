@@ -1,0 +1,14 @@
+<VirutalHost *:80>
+	<Directory>
+		AllowOverride None
+		Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+		Order allow,deny
+		Allow from all
+		AddHandler cgi-script .cgi
+	</Directory>
+	
+	RewriteEngine On
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteRule ^(.*)$ /dispatch.cgi$1 [QSA,L]
+	ScriptAlias /cgi-bin/ ..../Recithieves/public
+</VirtualHost>

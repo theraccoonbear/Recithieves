@@ -16,6 +16,7 @@ Fields All:     # every table gets these
 Tables:         # table specific columns
   - Name: sources
     Fields:
+      - name: slug
       - name: name
       - name: base_url
   
@@ -25,11 +26,12 @@ Tables:         # table specific columns
         type: source.id
       - name: title
       - name: description
+        type: text
       - name: serves
       - name: photo
       - name: directions
-        type: text[]
-        def: '{}'
+        type: text
+        def: "[]"
   
   - Name: ingredients
     Fields:

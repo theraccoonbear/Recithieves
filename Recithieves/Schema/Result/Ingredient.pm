@@ -15,6 +15,18 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
+
 =head1 TABLE: C<ingredients>
 
 =cut
@@ -22,12 +34,6 @@ use base 'DBIx::Class::Core';
 __PACKAGE__->table("ingredients");
 
 =head1 ACCESSORS
-
-=head2 recipe_id
-
-  data_type: 'integer'
-  is_foreign_key: 1
-  is_nullable: 1
 
 =head2 id
 
@@ -47,6 +53,12 @@ __PACKAGE__->table("ingredients");
 
   data_type: 'integer'
   default_value: 0
+  is_nullable: 1
+
+=head2 recipe_id
+
+  data_type: 'integer'
+  is_foreign_key: 1
   is_nullable: 1
 
 =head2 unit
@@ -76,8 +88,6 @@ __PACKAGE__->table("ingredients");
 =cut
 
 __PACKAGE__->add_columns(
-  "recipe_id",
-  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "id",
   {
     data_type         => "integer",
@@ -89,6 +99,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
   "qty",
   { data_type => "integer", default_value => 0, is_nullable => 1 },
+  "recipe_id",
+  { data_type => "integer", is_foreign_key => 1, is_nullable => 1 },
   "unit",
   { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
   "created",
@@ -140,8 +152,8 @@ __PACKAGE__->belongs_to(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-04-17 15:42:46
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:C1qTZlYx/B8updVoDKu/AQ
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-04-18 09:04:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6K7txnZTQGlPzgXbJ4AsJQ
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

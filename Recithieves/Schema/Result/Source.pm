@@ -15,6 +15,18 @@ use warnings;
 
 use base 'DBIx::Class::Core';
 
+=head1 COMPONENTS LOADED
+
+=over 4
+
+=item * L<DBIx::Class::InflateColumn::DateTime>
+
+=back
+
+=cut
+
+__PACKAGE__->load_components("InflateColumn::DateTime");
+
 =head1 TABLE: C<sources>
 
 =cut
@@ -44,10 +56,12 @@ __PACKAGE__->table("sources");
   is_nullable: 1
   size: 255
 
-=head2 created
+=head2 slug
 
-  data_type: 'timestamp with time zone'
+  data_type: 'varchar'
+  default_value: (empty string)
   is_nullable: 1
+  size: 255
 
 =head2 archived
 
@@ -59,6 +73,11 @@ __PACKAGE__->table("sources");
 
   data_type: 'timestamp with time zone'
   default_value: '1970-01-01 00:00:01-06'
+  is_nullable: 1
+
+=head2 created
+
+  data_type: 'timestamp with time zone'
   is_nullable: 1
 
 =cut
@@ -75,8 +94,8 @@ __PACKAGE__->add_columns(
   { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
   "name",
   { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
-  "created",
-  { data_type => "timestamp with time zone", is_nullable => 1 },
+  "slug",
+  { data_type => "varchar", default_value => "", is_nullable => 1, size => 255 },
   "archived",
   { data_type => "boolean", default_value => \"false", is_nullable => 1 },
   "modified",
@@ -85,6 +104,8 @@ __PACKAGE__->add_columns(
     default_value => "1970-01-01 00:00:01-06",
     is_nullable   => 1,
   },
+  "created",
+  { data_type => "timestamp with time zone", is_nullable => 1 },
 );
 
 =head1 UNIQUE CONSTRAINTS
@@ -119,8 +140,8 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-04-17 15:42:46
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:1380Hlru79ZGoetiTe1xtw
+# Created by DBIx::Class::Schema::Loader v0.07042 @ 2015-04-18 09:04:45
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:GFA1j3AcU2gr4vK3x5Jo7w
 
 
 # You can replace this text with custom code or comments, and it will be preserved on regeneration

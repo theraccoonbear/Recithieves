@@ -164,9 +164,9 @@ foreach my $t (@$tables) {
 				push @$parts, join(' ', @{$meta->{opts}});
 			}
 			if ($def) {
-				if ($def eq "'[]'") {
-					$def = '[]';
-				}
+				#if ($def eq "'[]'") {
+				#	$def = '[]';
+				#}
 				push @$parts, 'DEFAULT ' . $def;
 			}
 			
