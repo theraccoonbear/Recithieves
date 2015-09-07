@@ -31,9 +31,12 @@ if ($config_file && -f $config_file) {
 }
 
 my $ci = new Recithieves::Source::CooksIllustrated(config => $config);
-$ci->login();
 my $se = new Recithieves::Source::SeriousEats(config => $config);
 my $f52 = new Recithieves::Source::Food52(config => $config);
+
+sub init {
+	initRoutes();
+}
 
 sub initRoutes {
 	my $sources = {
@@ -44,6 +47,7 @@ sub initRoutes {
 
 	any '/api/search/:source/:term' => sub {
 		my $src = $sources->{param('source')};
+		
 		content_type 'text/plain';
 		return encode_json($src->search(param('term')));
 
@@ -51,11 +55,12 @@ sub initRoutes {
 	
 	any '/api/fetch/:source/:id' => sub {
 		my $src = $sources->{param('source')};
+		
 		content_type 'text/plain';
 		return encode_json($src->getRecipe(param('id')));
 	}
 }
 
-initRoutes();
+init();
 
 true;

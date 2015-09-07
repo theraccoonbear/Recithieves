@@ -84,6 +84,9 @@ sub search {
   my $self = shift @_;
 	my $terms = shift @_;
 	
+	if (!$self->logged_in) { $self->login(); }
+	
+	
 	my $params = {
 		'q' => $terms,
 		'document_type' => 'recipes'
@@ -114,6 +117,8 @@ sub getRecipe {
 	my $recipe_id = shift @_;
 	
 	my $url = $recipe_id;
+	
+	if (!$self->logged_in) { $self->login(); }
 	
 	if ($recipe_id =~ m/^\d+$/) {
 		$url = $self->baseURL() . '/recipes/' . $recipe_id;
@@ -163,21 +168,32 @@ sub login {
 	
 	$self->mech->get($url);
 	
+	$self->log('Logging into Cooks Illustrated');
+	
 	if ($self->mech->success) {
-		$self->mech->submit_form(
-			form_number => 5,
-			fields => {
-				'user[email]' => $username,
-				'user[password]' => $password
+		my $form = $self->mech->form_number(5);
+		if ($form) {
+			$self->mech->submit_form(
+				form_number => 5,
+				fields => {
+					'user[email]' => $username,
+					'user[password]' => $password
+				}
+			);
+			
+			if ($self->mech->success) {
+				if ($self->mech->content !~ m/incorrect password/i) {
+					$self->log('Success');
+					$ret_val = 1;
+				} else {
+					$self->log('Error Logging In');
+				}
 			}
-		);
-		
-		if ($self->mech->success) {
-			if ($self->mech->content !~ m/incorrect password/i) {
-				$ret_val = 1;
-			}
+		} else {
+			$self->log('Already Logged In');
+			$ret_val = 1;
 		}
-	}		
+	}
 	
 	$self->logged_in($ret_val != 0);
 	

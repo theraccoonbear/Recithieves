@@ -133,6 +133,7 @@ has 'mech' => (
 		my $cookie_jar = HTTP::Cookies->new();
 		$cookie_jar->clear();
 		my $www_mech = WWW::Mechanize->new(
+			auto_check => 0,
 			cookie_jar => $cookie_jar,
 			SSL_verify_mode => IO::Socket::SSL::SSL_VERIFY_NONE,
 			PERL_LWP_SSL_VERIFY_HOSTNAME => 0,
@@ -227,14 +228,18 @@ sub pullURL {
 		content => ''
 	}; 
 	
+	$self->log("requesting $url");
+	
 	if ($no_cache || !$self->cache->exists($url)) {
-		$self->log("pulling $url");
 		$self->mech->get($url);
 		if ($self->mech->success) {
+			$self->log('success');
 			$ret->{success} = 1;
 			$ret->{content} = $self->mech->{content};
 			$self->cache->set($url, encode_json($ret));
 		} else {
+			$self->log('error');
+			$self->log(Dumper($self->mech->response()));
 			$ret->{success} = 0;
 			$ret->{content} = '';
 		}

@@ -1,22 +1,31 @@
-<div id="searchBox">
-	<label for="searchTerm">Search Term: <input id="searchTerm"></label> <input type="button" id="searchButton" value="Search">
+<div class="row">
+	<div class="col-xs-12 col-md-4">
+		<div id="searchBox">
+			<label for="searchTerm">Search Term: <input id="searchTerm"></label> <input type="button" id="searchButton" value="Search">
+		</div>
+	</div>
+	
+	<script type="text/x-mustache" class="mtmpl" id="resultsEntry">
+		<div class="recipe row">
+			<div class="photo col-xs-4 col-md-1">
+				{{#photo}}
+					<img src="{{.}}">
+				{{/photo}}
+			</div><!-- .photo -->
+			<div class="recipe-detail col-xs-8 col-md-11">
+				<a href="#" class="actionable" data-action="showRecipe" data-id="{{id}}">{{title}}</a><br>
+				<p>{{description}}</p>
+			</div><!-- .recipe-detail -->
+		</div><!-- .recipe-->
+	</script>
+	
+	<script type="text/x-mustache" class="mtmpl" id="recipeDetail">
+		<div class="recipeDetail">
+			
+		</div>
+	</script>
 </div>
 
-<script type="text/x-mustache" class="mtmpl" id="resultsEntry">
-	<li class="recipe">
-		{{#photo}}
-			<img src="{{.}}">
-		{{/photo}}
-		<a href="#" class="actionable" data-action="showRecipe" data-id="{{id}}">{{title}}</a> - <p>{{description}}</p>
-	</li>
-</script>
-
-<script type="text/x-mustache" class="mtmpl" id="recipeDetail">
-	<div class="recipeDetail">
+<div id="resultsList" data-template="resultEntry">
 		
-	</div>
-</script>
-
-<ul id="resultsList" data-template="resultEntry">
-	
-</ul>
+</div>
