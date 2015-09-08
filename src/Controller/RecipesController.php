@@ -107,4 +107,9 @@ class RecipesController extends AppController
         }
         return $this->redirect(['action' => 'index']);
     }
+    
+    public function search($term = '', $provider = null) {
+        $this->set('results', []);
+        $this->set('_serialize', ['results']);
+    }
 }

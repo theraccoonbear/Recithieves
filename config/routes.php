@@ -77,8 +77,9 @@ Router::scope('/', function ($routes) {
 
 Router::scope('/api', function ($routes) {
     $routes->extensions(['json', 'xml']);
-    $routes->resources('Sources');
-    $routes->resources('Recipes');
+    //$routes->resources('Sources');
+    //$routes->resources('Recipes');
+    $routes->connect('/recipes/search', ['controller' => 'Recipes', 'action' => 'search'], ['_name' => 'api-search']);
 });
 
 
