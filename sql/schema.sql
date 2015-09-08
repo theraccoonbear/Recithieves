@@ -1,0 +1,42 @@
+DROP TABLE IF EXISTS sources CASCADE;
+CREATE TABLE sources (
+  id SERIAL PRIMARY KEY,
+  base_url VARCHAR(255)  DEFAULT '',
+  name VARCHAR(255)  DEFAULT '',
+  slug VARCHAR(255)  DEFAULT '',
+  archived BOOLEAN  DEFAULT '0',
+  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01',
+  created TIMESTAMP WITH TIME ZONE 
+);
+
+
+
+DROP TABLE IF EXISTS recipes CASCADE;
+CREATE TABLE recipes (
+  id SERIAL PRIMARY KEY,
+  description TEXT  DEFAULT '',
+  directions TEXT  DEFAULT '[]',
+  photo VARCHAR(255)  DEFAULT '',
+  serves VARCHAR(255)  DEFAULT '',
+  source_id INTEGER REFERENCES sources (id),
+  title VARCHAR(255)  DEFAULT '',
+  created TIMESTAMP WITH TIME ZONE ,
+  archived BOOLEAN  DEFAULT '0',
+  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01'
+);
+
+
+
+DROP TABLE IF EXISTS ingredients CASCADE;
+CREATE TABLE ingredients (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255)  DEFAULT '',
+  qty INTEGER  DEFAULT '0',
+  recipe_id INTEGER REFERENCES recipes (id),
+  unit VARCHAR(255)  DEFAULT '',
+  created TIMESTAMP WITH TIME ZONE ,
+  archived BOOLEAN  DEFAULT '0',
+  modified TIMESTAMP WITH TIME ZONE  DEFAULT '1970-01-01 00:00:01'
+);
+
+
