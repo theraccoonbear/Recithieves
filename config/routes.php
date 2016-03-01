@@ -80,6 +80,7 @@ Router::scope('/api', function ($routes) {
     //$routes->resources('Sources');
     //$routes->resources('Recipes');
     $routes->connect('/recipes/search', ['controller' => 'Recipes', 'action' => 'search'], ['_name' => 'api-search']);
+    $routes->connect('/recipes/fetch', ['controller' => 'Recipes', 'action' => 'fetch'], ['_name' => 'api-fetch']);
 });
 
 

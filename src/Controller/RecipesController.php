@@ -11,6 +11,11 @@ use App\Controller\AppController;
 class RecipesController extends AppController
 {
 
+    public function initialize() {
+        parent::initialize();
+        $this->loadComponent('Search');
+    }
+
     /**
      * Index method
      *
@@ -108,8 +113,20 @@ class RecipesController extends AppController
         return $this->redirect(['action' => 'index']);
     }
     
-    public function search($term = '', $provider = null) {
-        $this->set('results', []);
+    public function search() {
+        $term = $this->qsp('searchTerm', 'beans');
+        $results = $this->Search->search($term);
+        $this->set('results', $results);
+        $this->set('_serialize', ['results']);
+    }
+    
+    public function fetch() {
+        $id = $this->qsp('id', false);
+        $results = [];
+        if ($id !== false) {
+            $results = $this->Search->fetch($id);
+        }
+        $this->set('results', $results);
         $this->set('_serialize', ['results']);
     }
 }

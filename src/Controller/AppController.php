@@ -58,4 +58,8 @@ class AppController extends Controller
         $this->set('_serialize', $to_ser);
         
     }
+    
+    public function qsp($name, $default = false) {
+        return array_key_exists($name, $this->request->query) ? $this->request->query[$name] : $default;
+    }
 }
